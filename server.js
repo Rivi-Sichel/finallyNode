@@ -9,12 +9,9 @@ import userRouter from './routers/user.js'
 import {connectToDB} from "./config/db.js"
 
 
-
-
 dotnev.config()
 const app=express();
 connectToDB()
-
 app.use(cors())
 
 app.use(express.json())
