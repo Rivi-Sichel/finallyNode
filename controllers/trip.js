@@ -3,14 +3,31 @@ import { tripModel } from "../models/trip.js";
 //פונקציה שמחזירה את כל הטיולים
 export async function gatAll(req, res) {
     try {
-        let data = await tripModel.find();
-        res.json(data)
+        // קבלת פרמטרי ה-`page` ו-`limit` מה-URL
+        const page = parseInt(req.query.page) || 1;  // ברירת מחדל לדף 1
+        const limit = parseInt(req.query.limit) || 10;  // ברירת מחדל ל-10 תוצאות בדף
+        
+        // חישוב מתי להתחיל (skip)
+        const skip = (page - 1) * limit;
+
+        // שליפת הנתונים עם פקודות skip ו-limit
+        let data = await tripModel.find()
+            .skip(skip)
+            .limit(limit);
+        
+        // חישוב מספר הדפים
+        const totalCount = await tripModel.countDocuments();  // סופר את כל המסמכים
+        const totalPages = Math.ceil(totalCount / limit);  // חישוב מספר הדפים
+
+        // החזרת התשובה עם כל המידע כולל מספר הדפים
+        res.json({ trips: data, totalPages });
     }
     catch (err) {
         console.log(err);
-        res.status(400).json({ title: "cannot get all", message: err.message })
+        res.status(400).json({ title: "cannot get all", message: err.message });
     }
 }
+
 //פונקציה שמחזירה טיול לפי אידי
 export async function getById(req, res) {
     let id = req.params.id;

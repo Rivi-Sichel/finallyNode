@@ -7,6 +7,7 @@ const tripSchema = Schema({
     img: String,
     count: Number,
     prodDate: { type: Date, default: new Date() }
+
 })
 
 export const tripModel = model("trip", tripSchema);
